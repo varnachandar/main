@@ -26,7 +26,7 @@ def server():
 
     server_binding = ('', int(sys.argv[1]))
     ss.bind(server_binding)
-    ss.listen()
+    ss.listen(1000)
     host = socket.gethostname()
     print("[S]: Server host name is {}".format(host))
     localhost_ip = (socket.gethostbyname(host))
@@ -44,6 +44,7 @@ def server():
         data = csockid.recv(4096).decode('utf-8')
         print(data)
 
+    time.sleep(10)
     ss.close()
     exit()
 

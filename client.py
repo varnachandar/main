@@ -1,8 +1,8 @@
-#sends queries to response from input file PROJ2-HNS.txt
+#sends queries to RS from input file PROJ2-HNS.txt
 #directly prints output received from RS into output file, RESOLVED.txt
 
-#should accept command python client.py rsHostname rsListenPort
-    #gives RS host name and listening port 
+#should accept command "python client.py rsHostname rsListenPort"
+    #allocates RS host name and listening port 
 
 import threading
 import os
