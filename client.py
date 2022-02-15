@@ -13,17 +13,19 @@ import socket
 
 def client():
     try:
-        cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #cs = client socket
+        cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #socket for which client & rs will communicate
         print("[C]: Client socket created")
     except socket.error as err:
         print('Client: socket open error: {} \n'.format(err))
         exit()
 
     port = int(sys.argv[2]) #arbritary port we can stick with for now
-    localhost_addr = socket.gethostbyname(socket.gethostname()) #attaching a name to specified port (available for server (rs) too) 
-    
-    server_binding = (localhost_addr, port) #creative variable for connecting IP address (localhost_addr) & port
-    cs.connect(server_binding) #connecting IP address & port
+    ip_addr = socket.gethostbyname(sys.argv[1]) #attaching a name to specified port (available for server (rs) too) 
+    #socket.gethostname() = gets current host name (E/ ilab1)
+    #socket.gethostbyname(host) -> gets IP address from host name from DNS table
+
+    server_binding = (ip_addr, port) #making a tuple for line below, server_binding defines this particular service on our system
+    cs.connect(server_binding) #connecting socket to IP address & port
     
     input_file = open("PROJ2-HNS.txt")
     query_lump = input_file.read()
@@ -32,7 +34,7 @@ def client():
 
     for query in queries:   
         cs.send(query.encode('utf-8'))
-        time.sleep(1)
+        time.sleep(1) #to ensure packets are sent separately and not conjoint
 
     cs.close()
     exit()

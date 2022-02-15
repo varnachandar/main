@@ -6,7 +6,7 @@
 #maintains 3 connections
     #client, TS1, TS2
 
-#must be able to accept command python rs.py rsListenPort ts1Hostname ts1ListenPort ts2Hostname ts2ListenPort
+#must be able to accept command "python rs.py rsListenPort ts1Hostname ts1ListenPort ts2Hostname ts2ListenPort"
     #assigns hostname and ports where each server should listen for requests
 
 import threading
@@ -18,23 +18,23 @@ import socket
 
 def server():
     try:
-        ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #socket for which client & rs will communicate
         print("[S]: Server socket created")
     except socket.error as err:
         print('socket open error: {}\n'.format(err))
         exit()
 
-    server_binding = ('', int(sys.argv[1]))
-    ss.bind(server_binding)
-    ss.listen(1000)
+    
+    port = int(sys.argv[1])
     host = socket.gethostname()
     print("[S]: Server host name is {}".format(host))
-    localhost_ip = (socket.gethostbyname(host))
-    print("[S]: Server IP address is {}".format(localhost_ip))
+    ip_addr = (socket.gethostbyname(host))
+    print("[S]: Server IP address is {}".format(ip_addr))
 
-    print("[S]: Server host name is {}".format(host))
-    localhost_ip = (socket.gethostbyname(host))
-    print("[S]: Server IP address is {}".format(localhost_ip))
+    server_binding = (ip_addr, port)  #why does this just need a port
+    ss.bind(server_binding)
+    ss.listen(1000)
+
 
     csockid, addr = ss.accept()
 
