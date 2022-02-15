@@ -20,19 +20,33 @@ def server():
     try:
         ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #socket for which client & rs will communicate
         print("[S]: Server socket created")
+        ts1s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #socket for which ts1 & client will communicate
+        print("[S]: TS1 socket created")
     except socket.error as err:
         print('socket open error: {}\n'.format(err))
         exit()
 
     
-    port = int(sys.argv[1])
-    host = socket.gethostname()
-    print("[S]: Server host name is {}".format(host))
-    ip_addr = (socket.gethostbyname(host))
-    print("[S]: Server IP address is {}".format(ip_addr))
+    #server socket connection to client
+    port_client = int(sys.argv[1])
+    host_client = socket.gethostname()
+    print("[S]: Server host name is {}".format(host_client))
+    ip_addr_client = (socket.gethostbyname(host_client))
+    print("[S]: Server IP address is {}".format(ip_addr_client))
 
-    server_binding = (ip_addr, port)  #why does this just need a port
-    ss.bind(server_binding)
+
+    #client socket connection to ts1
+    port_ts1 = int(sys.argv[3]) #arbritary port we can stick with for now
+    ip_addr_ts1 = socket.gethostbyname(sys.argv[2]) #attaching a name to specified port (available for server (rs) too) 
+    #socket.gethostname() = gets current host name (E/ ilab1)
+    #socket.gethostbyname(host) -> gets IP address from host name from DNS table
+
+    server_binding_ts1 = (ip_addr_ts1, port_ts1) #making a tuple for line below, server_binding defines this particular service on our system
+    ts1s.connect(server_binding_ts1)
+
+    #server socket connection to client
+    server_binding_client = (ip_addr_client, port_client) 
+    ss.bind(server_binding_client)
     ss.listen(1000)
 
 
@@ -42,10 +56,12 @@ def server():
 
     while data:
         data = csockid.recv(4096).decode('utf-8')
-        print(data)
+        ts1s.send(data.encode('utf-8'))
+        time.sleep(1)
 
     time.sleep(10)
     ss.close()
+    ts1s.close()
     exit()
 
 if __name__ == "__main__":
