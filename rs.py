@@ -22,6 +22,8 @@ def server():
         print("[S]: Server socket created")
         ts1s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #socket for which ts1 & client will communicate
         print("[S]: TS1 socket created")
+        ts2s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("[S]: TS2 socket created")
     except socket.error as err:
         print('socket open error: {}\n'.format(err))
         exit()
@@ -44,6 +46,12 @@ def server():
     server_binding_ts1 = (ip_addr_ts1, port_ts1) #making a tuple for line below, server_binding defines this particular service on our system
     ts1s.connect(server_binding_ts1)
 
+    port_ts2 = int(sys.argv[5])
+    ip_addr_ts2 = socket.gethostbyname(sys.argv[3])
+
+    server_binding_ts2 = (ip_addr_ts2, port_ts2) #making a tuple for line below, server_binding defines this particular service on our system
+    ts2s.connect(server_binding_ts2)
+
     #server socket connection to client
     server_binding_client = (ip_addr_client, port_client) 
     ss.bind(server_binding_client)
@@ -55,9 +63,11 @@ def server():
     data = csockid.recv(4096).decode('utf-8')
 
     while data:
-        data = csockid.recv(4096).decode('utf-8')
         ts1s.send(data.encode('utf-8'))
+        response = ts1s.recv(4096).decode('utf-8')
+        print(response)
         time.sleep(1)
+        data = csockid.recv(4096).decode('utf-8')
 
     time.sleep(10)
     ss.close()

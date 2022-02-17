@@ -8,6 +8,7 @@
 import threading
 import os
 import time
+import json 
 import sys
 import random
 import socket
@@ -30,14 +31,32 @@ def server1():
     server_binding = (ip_addr, port) 
     ts1.bind(server_binding)
     ts1.listen(1000)
-
     csockid, addr = ts1.accept()
+
+    dns_table = open("PROJ2-DNSTS1.txt")
+    dictionary = {}
+
+    for entry in dns_table:
+        key, value, A = entry.split()
+        key.lower()
+        dictionary[key] = value
+
+    print(dictionary)
+        
 
     data = csockid.recv(4096).decode('utf-8')
 
     while data:
-        data = csockid.recv(4096).decode('utf-8')
         print(data)
+        data.lower()
+
+        if data in dictionary:
+            domainName = json.dumps((data, dictionary.get(data)))
+        else:
+            domainName = "null"
+
+        csockid.send(domainName.encode('utf-8'))
+        data = csockid.recv(4096).decode('utf-8')
 
     ts1.close()
     exit()
